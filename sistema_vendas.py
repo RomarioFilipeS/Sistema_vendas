@@ -44,18 +44,54 @@ while True:
         else :
                 print("ID informado nao existe no estoque."
               )
+  
     elif opcao == 3:
         if carrinho:
-            print("Visualizar Carrinhos!")
+            print("\n=== Visualizar Carrinho! ===")
             subtotal = 0
+            
+            # Exibe cada item do carrinho detalhadamente
             for i in carrinho:
-                print(f"{i["Qtd"]}x {i['Nome']} no valor de R$ {i['preco']}(cada)\nTotal R$ {i['Valor_total']}")
+                print(f"{i['Qtd']}x {i['Nome']} - Valor Unitário: R$ {i['preco']:.2f} (Total: R$ {i['Valor_total']:.2f})")
                 subtotal += i['Valor_total']
-            print (f"Total R$ {subtotal}")
-        else :
-            print("Carrinho vazio")
+            
+            print("============================")
+            print(f"Total Atual do Carrinho: R$ {subtotal:.2f}")
+            print("============================\n")
+        else:
+            print("\n⚠ Carrinho vazio! Adicione produtos antes de visualizar.\n")
     elif opcao == 4:
-        print("Finalizar Compra!")
+        if carrinho:
+            print("\n=== Finalizar Compra ===")
+
+        total_compra = sum(item["Valor_total"] for item in carrinho)
+
+        cupom = int(input("Digite um cupom (ou pressione Enter): ")).upper()
+        desconto = 0
+
+        if cupom == "DEV10":
+            desconto = total_compra * 0.10
+        elif cupom == "DEV20" and total_compra > 500:
+            desconto = total_compra * 0.20
+        elif cupom != "":
+            print("Cupom inválido!")
+
+        total = total_compra - desconto
+
+        print(f"\nSubtotal: R$ {total_compra:.2f}")
+        print(f"Desconto: R$ {desconto:.2f}")
+        print(f"Total a pagar: R$ {total:.2f}")
+
+        confirmar = input("Confirmar pagamento? (S/N): ").upper()
+
+        if confirmar == "S":
+            print("Compra finalizada com sucesso!")
+            carrinho.clear()
+        else:
+            for item in carrinho:
+                estoque[item["ID"]]["Quantidade"] += item["Quantidade"]
+            carrinho.clear()
+            print("Compra cancelada.")
 
     elif opcao == 0:
         print("Sair do sistema.")
